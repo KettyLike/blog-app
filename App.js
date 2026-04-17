@@ -1,20 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AppNavigator from './src/navigation/AppNavigator';
+import { articles } from './src/data/articles';
+import { colors } from './src/theme/colors';
 
 export default function App() {
+  const [selectedArticleId, setSelectedArticleId] = useState(articles[0]?.id ?? null);
+
+  const selectedArticle = useMemo(
+    () => articles.find((article) => article.id === selectedArticleId) ?? articles[0],
+    [selectedArticleId]
+  );
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <AppNavigator
+        articles={articles}
+        selectedArticle={selectedArticle}
+        onSelectArticle={setSelectedArticleId}
+        theme={colors}
+      />
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
