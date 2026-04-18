@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ArticleCard from '../components/ArticleCard';
 import { spacing } from '../theme/spacing';
 
-export default function HomeScreen({ articles, onOpenArticle, theme }) {
+export default function HomeScreen({ articles, navigation, theme }) {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <FlatList
@@ -24,7 +24,11 @@ export default function HomeScreen({ articles, onOpenArticle, theme }) {
           </View>
         }
         renderItem={({ item }) => (
-          <ArticleCard article={item} onPress={() => onOpenArticle(item.id)} theme={theme} />
+          <ArticleCard
+            article={item}
+            onPress={() => navigation.navigate('Article', { articleId: item.id })}
+            theme={theme}
+          />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />

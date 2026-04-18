@@ -1,38 +1,38 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen';
 import ArticleScreen from '../screens/ArticleScreen';
 
-export default function AppNavigator({
-  articles,
-  selectedArticle,
-  onSelectArticle,
-  theme,
-}) {
-  const [activeScreen, setActiveScreen] = useState('home');
+const Stack = createStackNavigator();
 
-  const openArticle = (articleId) => {
-    onSelectArticle(articleId);
-    setActiveScreen('article');
-  };
+export default function AppNavigator({ articles, theme }) {
+  const initialArticleId = articles[0]?.id ?? null;
 
-  const goBack = () => {
-    setActiveScreen('home');
+  const renderArticleScreen = ({ route, navigation }) => {
+    const articleId = route.params?.articleId ?? initialArticleId;
+    const article = articles.find((item) => item.id === articleId) ?? articles[0];
+
+    return <ArticleScreen article={article} navigation={navigation} theme={theme} />;
   };
 
   return (
-    <View style={styles.container}>
-      {activeScreen === 'home' ? (
-        <HomeScreen articles={articles} onOpenArticle={openArticle} theme={theme} />
-      ) : (
-        <ArticleScreen article={selectedArticle} onGoBack={goBack} theme={theme} />
-      )}
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { backgroundColor: theme.background },
+        }}
+      >
+        <Stack.Screen name="Home">
+          {(props) => <HomeScreen {...props} articles={articles} theme={theme} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name="Article"
+          component={renderArticleScreen}
+          initialParams={{ articleId: initialArticleId }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

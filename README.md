@@ -2,12 +2,12 @@
 
 Mobile blog application built with `React Native` and `Expo`.
 
-This first step includes the base app structure: article list with previews, article details screen, formatted content blocks, comments section, and native share support.
+This step includes the base app structure with real stack navigation via `React Navigation`: article list with previews, article details screen, formatted content blocks, comments section, and native share support.
 
 ## Implemented in this step
 
 - home screen with article previews;
-- article details screen;
+- article details screen opened through `React Navigation`;
 - formatted content rendering: headings, paragraphs, images;
 - comments section on the article screen;
 - project structure for further development.

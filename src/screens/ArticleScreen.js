@@ -5,7 +5,7 @@ import CommentList from '../components/CommentList';
 import ContentRenderer from '../components/ContentRenderer';
 import { spacing } from '../theme/spacing';
 
-export default function ArticleScreen({ article, onGoBack, theme }) {
+export default function ArticleScreen({ article, navigation, theme }) {
   const handleShare = async () => {
     try {
       await Share.share({
@@ -18,13 +18,10 @@ export default function ArticleScreen({ article, onGoBack, theme }) {
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.topBar}>
           <TouchableOpacity
-            onPress={onGoBack}
+            onPress={() => navigation.goBack()}
             style={[styles.iconButton, { backgroundColor: theme.surface }]}
           >
             <ArrowLeft color={theme.textPrimary} size={20} />
@@ -44,7 +41,7 @@ export default function ArticleScreen({ article, onGoBack, theme }) {
 
           <View style={styles.row}>
             <Text style={[styles.metaText, { color: theme.textMuted }]}>
-              {article.author} · {article.readTime}
+              {article.author} - {article.readTime}
             </Text>
             <View style={styles.commentBadge}>
               <MessageCircle color={theme.textMuted} size={14} />
