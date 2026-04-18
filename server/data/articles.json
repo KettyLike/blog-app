@@ -1,0 +1,64 @@
+[
+  {
+    "id": "1",
+    "category": "Design",
+    "title": "How to make a blog comfortable to read on mobile",
+    "preview": "A closer look at article layout, typography, content blocks, and the UX choices that make mobile reading feel effortless.",
+    "author": "Maria Kovalenko",
+    "readTime": "6 min read",
+    "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80",
+    "content": [
+      {
+        "id": "1-1",
+        "type": "heading",
+        "text": "The screen structure should guide the reader"
+      },
+      {
+        "id": "1-2",
+        "type": "paragraph",
+        "text": "On a mobile screen it is important to show the title, a short intro, and a clear content hierarchy right away. Readers should instantly understand what matters most."
+      },
+      {
+        "id": "1-3",
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80"
+      },
+      {
+        "id": "1-4",
+        "type": "heading",
+        "text": "Formatted text and visual breathing room"
+      },
+      {
+        "id": "1-5",
+        "type": "paragraph",
+        "text": "A mix of subheadings, short paragraphs, and images makes an article feel lighter and easier to scan. Users get tired less quickly and find key ideas faster."
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "category": "Development",
+    "title": "Why Expo is a strong fit for a study React Native project",
+    "preview": "How Expo speeds up setup, simplifies Android testing, and removes a lot of routine configuration work at the start.",
+    "author": "Ihor Shevchenko",
+    "readTime": "4 min read",
+    "coverImage": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80",
+    "content": [
+      {
+        "id": "2-1",
+        "type": "heading",
+        "text": "A quick start without extra configuration"
+      },
+      {
+        "id": "2-2",
+        "type": "paragraph",
+        "text": "Expo helps us focus on interface and application logic quickly. For a study blog app that means less time on native setup and more time on actual features."
+      },
+      {
+        "id": "2-3",
+        "type": "paragraph",
+        "text": "At the beginning it is enough to think through folders, screens, and mock data. After that we can iteratively add comments, search, likes, or backend integration."
+      }
+    ]
+  }
+]

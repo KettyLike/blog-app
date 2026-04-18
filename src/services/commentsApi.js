@@ -8,11 +8,6 @@ async function parseResponse(response) {
   return response.json();
 }
 
-export async function fetchComments() {
-  const response = await fetch(`${API_URL}/comments`);
-  return parseResponse(response);
-}
-
 export async function postComment(articleId, comment) {
   const response = await fetch(`${API_URL}/articles/${articleId}/comments`, {
     method: 'POST',

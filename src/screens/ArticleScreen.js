@@ -1,11 +1,55 @@
-import { Alert, Share, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Share,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, MessageCircle, Share2 } from 'lucide-react-native';
 import CommentList from '../components/CommentList';
 import ContentRenderer from '../components/ContentRenderer';
 import { spacing } from '../theme/spacing';
 
-export default function ArticleScreen({ article, navigation, onAddComment, theme }) {
+export default function ArticleScreen({
+  article,
+  navigation,
+  onAddComment,
+  onRefreshArticle,
+  theme,
+}) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const refreshArticle = async () => {
+        if (!article?.id) {
+          return;
+        }
+
+        setIsRefreshing(true);
+        await onRefreshArticle(article.id);
+
+        if (isActive) {
+          setIsRefreshing(false);
+        }
+      };
+
+      refreshArticle();
+
+      return () => {
+        isActive = false;
+      };
+    }, [article?.id, onRefreshArticle])
+  );
+
   const handleShare = async () => {
     try {
       await Share.share({
@@ -59,6 +103,15 @@ export default function ArticleScreen({ article, navigation, onAddComment, theme
           <Text style={[styles.category, { color: theme.accent }]}>{article.category}</Text>
           <Text style={[styles.title, { color: theme.textPrimary }]}>{article.title}</Text>
           <Text style={[styles.preview, { color: theme.textSecondary }]}>{article.preview}</Text>
+
+          {isRefreshing ? (
+            <View style={styles.refreshRow}>
+              <ActivityIndicator size="small" color={theme.accent} />
+              <Text style={[styles.refreshText, { color: theme.textMuted }]}>
+                Refreshing article...
+              </Text>
+            </View>
+          ) : null}
 
           <View style={styles.row}>
             <Text style={[styles.metaText, { color: theme.textMuted }]}>
@@ -123,6 +176,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: spacing.sm,
+  },
+  refreshRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
+  refreshText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   metaText: {
     fontSize: 14,

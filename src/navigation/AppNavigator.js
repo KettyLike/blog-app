@@ -5,7 +5,13 @@ import ArticleScreen from '../screens/ArticleScreen';
 
 const Stack = createStackNavigator();
 
-export default function AppNavigator({ articles, onAddComment, theme }) {
+export default function AppNavigator({
+  articles,
+  onAddComment,
+  onRefreshArticle,
+  onRefreshArticles,
+  theme,
+}) {
   const initialArticleId = articles[0]?.id ?? null;
 
   return (
@@ -18,7 +24,14 @@ export default function AppNavigator({ articles, onAddComment, theme }) {
         }}
       >
         <Stack.Screen name="Home">
-          {(props) => <HomeScreen {...props} articles={articles} theme={theme} />}
+          {(props) => (
+            <HomeScreen
+              {...props}
+              articles={articles}
+              onRefreshArticles={onRefreshArticles}
+              theme={theme}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="Article" initialParams={{ articleId: initialArticleId }}>
           {({ route, navigation }) => {
@@ -30,6 +43,7 @@ export default function AppNavigator({ articles, onAddComment, theme }) {
                 article={article}
                 navigation={navigation}
                 onAddComment={onAddComment}
+                onRefreshArticle={onRefreshArticle}
                 theme={theme}
               />
             );

@@ -1,9 +1,18 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ArticleCard from '../components/ArticleCard';
 import { spacing } from '../theme/spacing';
 
-export default function HomeScreen({ articles, navigation, theme }) {
+export default function HomeScreen({ articles, navigation, onRefreshArticles, theme }) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await onRefreshArticles();
+    setIsRefreshing(false);
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <FlatList
@@ -31,6 +40,14 @@ export default function HomeScreen({ articles, navigation, theme }) {
           />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.accent}
+            colors={[theme.accent]}
+          />
+        }
       />
     </SafeAreaView>
   );
