@@ -1,11 +1,11 @@
-import { Share, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Share, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, MessageCircle, Share2 } from 'lucide-react-native';
 import CommentList from '../components/CommentList';
 import ContentRenderer from '../components/ContentRenderer';
 import { spacing } from '../theme/spacing';
 
-export default function ArticleScreen({ article, navigation, theme }) {
+export default function ArticleScreen({ article, navigation, onAddComment, theme }) {
   const handleShare = async () => {
     try {
       await Share.share({
@@ -14,6 +14,18 @@ export default function ArticleScreen({ article, navigation, theme }) {
     } catch (error) {
       console.warn(error);
     }
+  };
+
+  const handleSubmitComment = ({ author, text }) => {
+    if (!author.trim() || !text.trim()) {
+      Alert.alert('Incomplete form', 'Please enter your name and comment text.');
+      return false;
+    }
+
+    return onAddComment(article.id, {
+      author: author.trim(),
+      text: text.trim(),
+    });
   };
 
   return (
@@ -53,7 +65,7 @@ export default function ArticleScreen({ article, navigation, theme }) {
         </View>
 
         <ContentRenderer content={article.content} theme={theme} />
-        <CommentList comments={article.comments} theme={theme} />
+        <CommentList comments={article.comments} onSubmit={handleSubmitComment} theme={theme} />
       </ScrollView>
     </SafeAreaView>
   );
