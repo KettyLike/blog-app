@@ -25,6 +25,15 @@ export default function ArticleScreen({ article, navigation, onAddComment, theme
     return onAddComment(article.id, {
       author: author.trim(),
       text: text.trim(),
+    }).then((isSaved) => {
+      if (!isSaved) {
+        Alert.alert(
+          'Backend unavailable',
+          'Make sure the local server is running before posting a comment.'
+        );
+      }
+
+      return isSaved;
     });
   };
 

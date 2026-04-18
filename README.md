@@ -1,8 +1,8 @@
 # BlogApp
 
-Mobile blog application built with `React Native` and `Expo`.
+Mobile blog application built with `React Native`, `Expo`, and a small local `Express` backend.
 
-This step includes the base app structure with real stack navigation via `React Navigation`, formatted article content, comments, native share support, a comment creation form, and local comment persistence with `AsyncStorage`.
+This step includes the base app structure with real stack navigation via `React Navigation`, formatted article content, comments loaded from a backend API, native share support, and an inline comment composer.
 
 ## Implemented in this step
 
@@ -10,8 +10,8 @@ This step includes the base app structure with real stack navigation via `React 
 - article details screen opened through `React Navigation`;
 - formatted content rendering: headings, paragraphs, images;
 - comments section on the article screen;
-- comment creation form with instant UI update;
-- local comment persistence after app restart;
+- inline comment composer inside the comments section;
+- shared comments through a local backend API;
 - project structure for further development.
 
 ## Project structure
@@ -19,10 +19,15 @@ This step includes the base app structure with real stack navigation via `React 
 ```text
 src/
   components/
+  config/
   data/
   navigation/
   screens/
+  services/
   theme/
+
+server/
+  data/
 ```
 
 ## Install dependencies
@@ -31,6 +36,14 @@ src/
 npm install
 ```
 
+## Run backend
+
+```bash
+npm run server
+```
+
+Keep this terminal open while the app is running.
+
 ## Run the app
 
 ```bash
@@ -38,6 +51,17 @@ npm start
 ```
 
 Then choose Android in the Expo terminal with `a`, or iOS with `i` on macOS.
+
+## Backend URL for devices
+
+- Android emulator uses `http://10.0.2.2:4000` or auto-detects your Expo host when possible.
+- iOS simulator uses `http://localhost:4000` automatically.
+- Physical device: start Expo with `EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:4000 npm start`
+
+If you see `Network request failed`, check these two things first:
+
+- `npm run server` is running in a separate terminal;
+- your phone and computer are on the same Wi‑Fi network.
 
 ## Next steps
 

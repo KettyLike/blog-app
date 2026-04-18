@@ -5,11 +5,18 @@ import { spacing } from '../theme/spacing';
 
 export default function CommentList({ comments, onSubmit, theme }) {
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [author, setAuthor] = useState('');
   const [text, setText] = useState('');
 
-  const handleSubmit = () => {
-    const isSubmitted = onSubmit({ author, text });
+  const handleSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    const isSubmitted = await onSubmit({ author, text });
+    setIsSubmitting(false);
 
     if (!isSubmitted) {
       return;
@@ -38,6 +45,7 @@ export default function CommentList({ comments, onSubmit, theme }) {
               opacity: pressed ? 0.8 : 1,
             },
           ]}
+          disabled={isSubmitting}
         >
           <PencilLine color={theme.accent} size={16} />
           <Text style={[styles.composeText, { color: theme.textPrimary }]}>
@@ -91,6 +99,7 @@ export default function CommentList({ comments, onSubmit, theme }) {
                   opacity: pressed ? 0.8 : 1,
                 },
               ]}
+              disabled={isSubmitting}
             >
               <Text style={[styles.secondaryText, { color: theme.textPrimary }]}>Cancel</Text>
             </Pressable>
@@ -100,10 +109,14 @@ export default function CommentList({ comments, onSubmit, theme }) {
                 styles.primaryButton,
                 {
                   backgroundColor: pressed ? theme.accentPressed : theme.accent,
+                  opacity: isSubmitting ? 0.7 : 1,
                 },
               ]}
+              disabled={isSubmitting}
             >
-              <Text style={[styles.primaryText, { color: theme.surface }]}>Post</Text>
+              <Text style={[styles.primaryText, { color: theme.surface }]}>
+                {isSubmitting ? 'Posting...' : 'Post'}
+              </Text>
             </Pressable>
           </View>
         </View>
