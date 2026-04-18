@@ -2,7 +2,7 @@
 
 Mobile blog application built with `React Native` and `Expo`.
 
-This step includes the base app structure with real stack navigation via `React Navigation`, formatted article content, comments, native share support, and a comment creation form.
+This step includes the base app structure with real stack navigation via `React Navigation`, formatted article content, comments, native share support, a comment creation form, and local comment persistence with `AsyncStorage`.
 
 ## Implemented in this step
 
@@ -11,6 +11,7 @@ This step includes the base app structure with real stack navigation via `React 
 - formatted content rendering: headings, paragraphs, images;
 - comments section on the article screen;
 - comment creation form with instant UI update;
+- local comment persistence after app restart;
 - project structure for further development.
 
 ## Project structure
@@ -42,5 +43,4 @@ Then choose Android in the Expo terminal with `a`, or iOS with `i` on macOS.
 
 - improve navigation;
 - move mock data into a dedicated service layer;
-- add persistence for comments;
 - polish the final UI.
