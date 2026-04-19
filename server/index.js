@@ -7,6 +7,7 @@ const app = express();
 const port = 4000;
 const commentsDbPath = path.join(__dirname, 'data', 'comments.json');
 const articlesDbPath = path.join(__dirname, 'data', 'articles.json');
+const usersDbPath = path.join(__dirname, 'data', 'users.json');
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +26,15 @@ async function readArticlesDb() {
   return JSON.parse(rawFile);
 }
 
+async function writeArticlesDb(data) {
+  await fs.writeFile(articlesDbPath, JSON.stringify(data, null, 2));
+}
+
+async function readUsersDb() {
+  const rawFile = await fs.readFile(usersDbPath, 'utf8');
+  return JSON.parse(rawFile);
+}
+
 async function readArticlesWithComments() {
   const [articles, comments] = await Promise.all([readArticlesDb(), readCommentsDb()]);
 
@@ -34,8 +44,47 @@ async function readArticlesWithComments() {
   }));
 }
 
+function buildArticleContent(body) {
+  return body
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph, index) => ({
+      id: `content-${Date.now()}-${index}`,
+      type: 'paragraph',
+      text: paragraph,
+    }));
+}
+
+function calculateReadTime(body) {
+  const wordsCount = body.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(wordsCount / 180));
+  return `${minutes} min read`;
+}
+
 app.get('/health', (_request, response) => {
   response.json({ ok: true });
+});
+
+app.post('/auth/login', async (request, response) => {
+  const { email, password } = request.body ?? {};
+  const users = await readUsersDb();
+  const user = users.find(
+    (item) => item.email.toLowerCase() === email?.trim().toLowerCase() && item.password === password
+  );
+
+  if (!user) {
+    response.status(401).json({ message: 'Invalid email or password.' });
+    return;
+  }
+
+  response.json({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    bio: user.bio,
+    role: user.role,
+  });
 });
 
 app.get('/comments', async (_request, response) => {
@@ -85,6 +134,47 @@ app.post('/articles/:articleId/comments', async (request, response) => {
   await writeCommentsDb(data);
 
   response.status(201).json(createdComment);
+});
+
+app.post('/articles', async (request, response) => {
+  const { title, category, body, coverImage, userId } = request.body ?? {};
+
+  if (!title?.trim() || !category?.trim() || !body?.trim() || !userId?.trim()) {
+    response.status(400).json({ message: 'Title, category, body, and userId are required.' });
+    return;
+  }
+
+  const users = await readUsersDb();
+  const user = users.find((item) => item.id === userId);
+
+  if (!user) {
+    response.status(404).json({ message: 'Author not found.' });
+    return;
+  }
+
+  const articles = await readArticlesDb();
+  const articleId = `article-${Date.now()}`;
+  const normalizedBody = body.trim();
+  const article = {
+    id: articleId,
+    category: category.trim(),
+    title: title.trim(),
+    preview: normalizedBody.slice(0, 140).trimEnd() + (normalizedBody.length > 140 ? '...' : ''),
+    author: user.name,
+    readTime: calculateReadTime(normalizedBody),
+    coverImage:
+      coverImage?.trim() ||
+      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80',
+    content: buildArticleContent(normalizedBody),
+  };
+
+  articles.unshift(article);
+  await writeArticlesDb(articles);
+
+  response.status(201).json({
+    ...article,
+    comments: [],
+  });
 });
 
 app.listen(port, () => {

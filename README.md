@@ -2,10 +2,12 @@
 
 Mobile blog application built with `React Native`, `Expo`, and a small local `Express` backend.
 
-This step includes the base app structure with real stack navigation via `React Navigation`, articles and comments loaded from a backend API, article refresh on details open, native share support, and an inline comment composer.
+This step includes demo authentication, bottom tab navigation, backend-driven articles and comments, article refresh on details open, native share support, and an inline comment composer.
 
 ## Implemented in this step
 
+- login screen with demo credentials;
+- bottom tab navigation: Home, Write, Profile;
 - home screen with article previews loaded from backend;
 - article details screen opened through `React Navigation`;
 - formatted content rendering: headings, paragraphs, images;
@@ -13,6 +15,8 @@ This step includes the base app structure with real stack navigation via `React 
 - article details refreshed through `GET /articles/:id` on screen open;
 - inline comment composer inside the comments section;
 - articles and comments served by a local backend API;
+- article creation through the backend;
+- profile screen with logout action;
 - project structure for further development.
 
 ## Project structure
@@ -29,6 +33,11 @@ src/
 server/
   data/
 ```
+
+## Demo login
+
+- email: `maria@example.com`
+- password: `12345678`
 
 ## Install dependencies
 

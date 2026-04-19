@@ -3,12 +3,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
-import { fetchArticleById, fetchArticles } from './src/services/articlesApi';
+import LoginScreen from './src/screens/LoginScreen';
+import { createArticle, fetchArticleById, fetchArticles } from './src/services/articlesApi';
+import { loginUser } from './src/services/authApi';
 import { postComment } from './src/services/commentsApi';
 import { colors } from './src/theme/colors';
 
 export default function App() {
   const [articleItems, setArticleItems] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleRefreshArticles = useCallback(async () => {
@@ -70,6 +73,32 @@ export default function App() {
     }
   }, []);
 
+  const handleLogin = useCallback(async (credentials) => {
+    try {
+      const user = await loginUser(credentials);
+      setCurrentUser(user);
+      return true;
+    } catch (error) {
+      console.warn('Failed to log in.', error);
+      return false;
+    }
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setCurrentUser(null);
+  }, []);
+
+  const handleCreateArticle = useCallback(async (articleInput) => {
+    try {
+      const createdArticle = await createArticle(articleInput);
+      setArticleItems((currentArticles) => [createdArticle, ...currentArticles]);
+      return true;
+    } catch (error) {
+      console.warn('Failed to create article.', error);
+      return false;
+    }
+  }, []);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
@@ -77,10 +106,15 @@ export default function App() {
         <View style={[styles.loader, { backgroundColor: colors.background }]}>
           <ActivityIndicator size="large" color={colors.accent} />
         </View>
+      ) : !currentUser ? (
+        <LoginScreen onLogin={handleLogin} theme={colors} />
       ) : (
         <AppNavigator
           articles={articleItems}
+          currentUser={currentUser}
           onAddComment={handleAddComment}
+          onCreateArticle={handleCreateArticle}
+          onLogout={handleLogout}
           onRefreshArticle={handleRefreshArticle}
           onRefreshArticles={handleRefreshArticles}
           theme={colors}
