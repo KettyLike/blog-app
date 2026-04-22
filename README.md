@@ -39,6 +39,10 @@ server/
 - email: `maria@example.com`
 - password: `12345678`
 
+## Registration
+
+Use the login screen toggle to switch to registration mode and create a new account (name, email, password). Accounts are stored in `server/data/users.json`.
+
 ## Install dependencies
 
 ```bash

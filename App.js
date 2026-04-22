@@ -5,7 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import LoginScreen from './src/screens/LoginScreen';
 import { createArticle, fetchArticleById, fetchArticles } from './src/services/articlesApi';
-import { loginUser } from './src/services/authApi';
+import { loginUser, registerUser } from './src/services/authApi';
 import { postComment } from './src/services/commentsApi';
 import { colors } from './src/theme/colors';
 
@@ -84,6 +84,17 @@ export default function App() {
     }
   }, []);
 
+  const handleRegister = useCallback(async (payload) => {
+    try {
+      const user = await registerUser(payload);
+      setCurrentUser(user);
+      return true;
+    } catch (error) {
+      console.warn('Failed to register.', error);
+      return false;
+    }
+  }, []);
+
   const handleLogout = useCallback(() => {
     setCurrentUser(null);
   }, []);
@@ -107,7 +118,7 @@ export default function App() {
           <ActivityIndicator size="large" color={colors.accent} />
         </View>
       ) : !currentUser ? (
-        <LoginScreen onLogin={handleLogin} theme={colors} />
+        <LoginScreen onLogin={handleLogin} onRegister={handleRegister} theme={colors} />
       ) : (
         <AppNavigator
           articles={articleItems}

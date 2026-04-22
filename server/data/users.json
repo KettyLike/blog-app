@@ -6,5 +6,21 @@
     "password": "12345678",
     "bio": "Mobile writer and editor focused on product storytelling.",
     "role": "author"
+  },
+  {
+    "id": "u-1776882863733",
+    "name": "Test User",
+    "email": "test57785@example.com",
+    "password": "pass1234",
+    "bio": "Hello",
+    "role": "author"
+  },
+  {
+    "id": "u-1776883091631",
+    "name": "Таня",
+    "email": "tanya",
+    "password": "1234",
+    "bio": "New BlogApp author.",
+    "role": "author"
   }
 ]

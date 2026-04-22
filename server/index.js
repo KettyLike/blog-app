@@ -35,6 +35,10 @@ async function readUsersDb() {
   return JSON.parse(rawFile);
 }
 
+async function writeUsersDb(data) {
+  await fs.writeFile(usersDbPath, JSON.stringify(data, null, 2));
+}
+
 async function readArticlesWithComments() {
   const [articles, comments] = await Promise.all([readArticlesDb(), readCommentsDb()]);
 
@@ -84,6 +88,44 @@ app.post('/auth/login', async (request, response) => {
     email: user.email,
     bio: user.bio,
     role: user.role,
+  });
+});
+
+app.post('/auth/register', async (request, response) => {
+  const { name, email, password, bio } = request.body ?? {};
+
+  if (!name?.trim() || !email?.trim() || !password?.trim()) {
+    response.status(400).json({ message: 'Name, email, and password are required.' });
+    return;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const users = await readUsersDb();
+
+  const emailExists = users.some((user) => user.email.toLowerCase() === normalizedEmail);
+  if (emailExists) {
+    response.status(409).json({ message: 'Email is already registered.' });
+    return;
+  }
+
+  const createdUser = {
+    id: `u-${Date.now()}`,
+    name: name.trim(),
+    email: normalizedEmail,
+    password: password.trim(),
+    bio: bio?.trim() || 'New BlogApp author.',
+    role: 'author',
+  };
+
+  users.push(createdUser);
+  await writeUsersDb(users);
+
+  response.status(201).json({
+    id: createdUser.id,
+    name: createdUser.name,
+    email: createdUser.email,
+    bio: createdUser.bio,
+    role: createdUser.role,
   });
 });
 

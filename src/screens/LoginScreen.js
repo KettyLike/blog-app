@@ -1,15 +1,45 @@
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LogIn } from 'lucide-react-native';
+import { LogIn, UserPlus } from 'lucide-react-native';
 import { spacing } from '../theme/spacing';
 
-export default function LoginScreen({ onLogin, theme }) {
+export default function LoginScreen({ onLogin, onRegister, theme }) {
+  const [mode, setMode] = useState('login');
+  const isRegisterMode = mode === 'register';
+
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('maria@example.com');
   const [password, setPassword] = useState('12345678');
+  const [bio, setBio] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = async () => {
+  const handleSubmit = async () => {
+    if (isRegisterMode) {
+      if (!name.trim() || !email.trim() || !password.trim()) {
+        Alert.alert('Incomplete form', 'Name, email, and password are required.');
+        return;
+      }
+
+      setIsSubmitting(true);
+      const isRegistered = await onRegister({
+        name: name.trim(),
+        email: email.trim(),
+        password: password.trim(),
+        bio: bio.trim(),
+      });
+      setIsSubmitting(false);
+
+      if (!isRegistered) {
+        Alert.alert(
+          'Registration failed',
+          'This email may already be in use. Check the backend server and try again.'
+        );
+      }
+
+      return;
+    }
+
     if (!email.trim() || !password.trim()) {
       Alert.alert('Incomplete form', 'Enter email and password to continue.');
       return;
@@ -31,15 +61,58 @@ export default function LoginScreen({ onLogin, theme }) {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <View style={[styles.card, { backgroundColor: theme.surface }]}>
         <View style={[styles.badge, { backgroundColor: theme.surfaceAlt }]}>
-          <LogIn color={theme.accent} size={22} />
+          {isRegisterMode ? (
+            <UserPlus color={theme.accent} size={22} />
+          ) : (
+            <LogIn color={theme.accent} size={22} />
+          )}
         </View>
-        <Text style={[styles.title, { color: theme.textPrimary }]}>Welcome back</Text>
+        <Text style={[styles.title, { color: theme.textPrimary }]}>
+          {isRegisterMode ? 'Create account' : 'Welcome back'}
+        </Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-          Demo login to open the blog dashboard, write articles, and manage your profile.
+          {isRegisterMode
+            ? 'Register a new demo account to publish articles and comment from your profile.'
+            : 'Demo login to open the blog dashboard, write articles, and manage your profile.'}
         </Text>
-        <Text style={[styles.hint, { color: theme.textMuted }]}>
-          Demo: `maria@example.com` / `12345678`
-        </Text>
+        {!isRegisterMode ? (
+          <Text style={[styles.hint, { color: theme.textMuted }]}>
+            Demo: `maria@example.com` / `12345678`
+          </Text>
+        ) : null}
+
+        {isRegisterMode ? (
+          <>
+            <TextInput
+              placeholder="Name"
+              placeholderTextColor={theme.textMuted}
+              value={name}
+              onChangeText={setName}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.surfaceAlt,
+                  color: theme.textPrimary,
+                  borderColor: theme.border,
+                },
+              ]}
+            />
+            <TextInput
+              placeholder="Bio (optional)"
+              placeholderTextColor={theme.textMuted}
+              value={bio}
+              onChangeText={setBio}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.surfaceAlt,
+                  color: theme.textPrimary,
+                  borderColor: theme.border,
+                },
+              ]}
+            />
+          </>
+        ) : null}
 
         <TextInput
           placeholder="Email"
@@ -75,7 +148,7 @@ export default function LoginScreen({ onLogin, theme }) {
         />
 
         <Pressable
-          onPress={handleLogin}
+          onPress={handleSubmit}
           disabled={isSubmitting}
           style={({ pressed }) => [
             styles.button,
@@ -86,7 +159,28 @@ export default function LoginScreen({ onLogin, theme }) {
           ]}
         >
           <Text style={[styles.buttonText, { color: theme.surface }]}>
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting
+              ? isRegisterMode
+                ? 'Creating...'
+                : 'Signing in...'
+              : isRegisterMode
+                ? 'Create account'
+                : 'Sign in'}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => setMode(isRegisterMode ? 'login' : 'register')}
+          disabled={isSubmitting}
+          style={({ pressed }) => [
+            styles.linkButton,
+            {
+              opacity: pressed ? 0.75 : 1,
+            },
+          ]}
+        >
+          <Text style={[styles.linkText, { color: theme.textSecondary }]}>
+            {isRegisterMode ? 'Already have an account? Sign in' : "Don't have an account? Register"}
           </Text>
         </Pressable>
       </View>
@@ -140,5 +234,13 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 15,
     fontWeight: '700',
+  },
+  linkButton: {
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
