@@ -24,11 +24,10 @@ export default function HomeScreen({ articles, navigation, onRefreshArticles, th
           <View style={styles.header}>
             <Text style={[styles.kicker, { color: theme.accent }]}>BlogApp</Text>
             <Text style={[styles.title, { color: theme.textPrimary }]}>
-              Article feed with previews
+              Latest stories
             </Text>
             <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-              Base blog structure with a feed screen, article details, formatted content, and
-              comments.
+              Fresh posts from the community.
             </Text>
           </View>
         }

@@ -14,6 +14,10 @@ export default function ContentRenderer({ content, theme }) {
         }
 
         if (block.type === 'image') {
+          if (!block.url) {
+            return null;
+          }
+
           return <Image key={block.id} source={{ uri: block.url }} style={styles.image} />;
         }
 

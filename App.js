@@ -7,6 +7,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import { createArticle, fetchArticleById, fetchArticles } from './src/services/articlesApi';
 import { loginUser, registerUser } from './src/services/authApi';
 import { postComment } from './src/services/commentsApi';
+import { setUserAvatar } from './src/services/usersApi';
 import { colors } from './src/theme/colors';
 
 export default function App() {
@@ -99,6 +100,17 @@ export default function App() {
     setCurrentUser(null);
   }, []);
 
+  const handleSetAvatar = useCallback(async (avatar) => {
+    try {
+      const updatedUser = await setUserAvatar(currentUser.id, avatar);
+      setCurrentUser(updatedUser);
+      return true;
+    } catch (error) {
+      console.warn('Failed to set avatar.', error);
+      return false;
+    }
+  }, [currentUser?.id]);
+
   const handleCreateArticle = useCallback(async (articleInput) => {
     try {
       const createdArticle = await createArticle(articleInput);
@@ -126,6 +138,7 @@ export default function App() {
           onAddComment={handleAddComment}
           onCreateArticle={handleCreateArticle}
           onLogout={handleLogout}
+          onSetAvatar={handleSetAvatar}
           onRefreshArticle={handleRefreshArticle}
           onRefreshArticles={handleRefreshArticles}
           theme={colors}

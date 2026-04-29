@@ -43,6 +43,11 @@ server/
 
 Use the login screen toggle to switch to registration mode and create a new account (name, email, password). Accounts are stored in `server/data/users.json`.
 
+## Images
+
+- Cover images and avatars are uploaded from the device gallery (no URL fields).
+- Newly created articles can be published without a cover image.
+
 ## Install dependencies
 
 ```bash

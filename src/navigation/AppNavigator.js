@@ -63,6 +63,7 @@ export default function AppNavigator({
   onAddComment,
   onCreateArticle,
   onLogout,
+  onSetAvatar,
   onRefreshArticle,
   onRefreshArticles,
   theme,
@@ -131,7 +132,14 @@ export default function AppNavigator({
             title: 'Profile',
           }}
         >
-          {() => <ProfileScreen currentUser={currentUser} onLogout={onLogout} theme={theme} />}
+          {() => (
+            <ProfileScreen
+              currentUser={currentUser}
+              onLogout={onLogout}
+              onSetAvatar={onSetAvatar}
+              theme={theme}
+            />
+          )}
         </Tab.Screen>
       </Tab.Navigator>
     </NavigationContainer>

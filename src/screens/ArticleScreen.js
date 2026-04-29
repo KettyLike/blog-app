@@ -100,9 +100,10 @@ export default function ArticleScreen({
         </View>
 
         <View style={styles.meta}>
-          <Text style={[styles.category, { color: theme.accent }]}>{article.category}</Text>
+          {article.category ? (
+            <Text style={[styles.category, { color: theme.accent }]}>{article.category}</Text>
+          ) : null}
           <Text style={[styles.title, { color: theme.textPrimary }]}>{article.title}</Text>
-          <Text style={[styles.preview, { color: theme.textSecondary }]}>{article.preview}</Text>
 
           {isRefreshing ? (
             <View style={styles.refreshRow}>
@@ -166,10 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '800',
     lineHeight: 36,
-  },
-  preview: {
-    fontSize: 16,
-    lineHeight: 24,
   },
   row: {
     flexDirection: 'row',

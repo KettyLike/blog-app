@@ -10,7 +10,7 @@ const articlesDbPath = path.join(__dirname, 'data', 'articles.json');
 const usersDbPath = path.join(__dirname, 'data', 'users.json');
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
 
 async function readCommentsDb() {
   const rawFile = await fs.readFile(commentsDbPath, 'utf8');
@@ -88,6 +88,7 @@ app.post('/auth/login', async (request, response) => {
     email: user.email,
     bio: user.bio,
     role: user.role,
+    avatar: user.avatar ?? null,
   });
 });
 
@@ -113,7 +114,7 @@ app.post('/auth/register', async (request, response) => {
     name: name.trim(),
     email: normalizedEmail,
     password: password.trim(),
-    bio: bio?.trim() || 'New BlogApp author.',
+    bio: bio?.trim() || '',
     role: 'author',
   };
 
@@ -126,6 +127,40 @@ app.post('/auth/register', async (request, response) => {
     email: createdUser.email,
     bio: createdUser.bio,
     role: createdUser.role,
+    avatar: createdUser.avatar ?? null,
+  });
+});
+
+app.post('/users/:userId/avatar', async (request, response) => {
+  const { userId } = request.params;
+  const { avatar } = request.body ?? {};
+
+  if (!avatar?.trim()) {
+    response.status(400).json({ message: 'Avatar is required.' });
+    return;
+  }
+
+  const users = await readUsersDb();
+  const userIndex = users.findIndex((user) => user.id === userId);
+
+  if (userIndex === -1) {
+    response.status(404).json({ message: 'User not found.' });
+    return;
+  }
+
+  users[userIndex] = {
+    ...users[userIndex],
+    avatar: avatar.trim(),
+  };
+  await writeUsersDb(users);
+
+  response.json({
+    id: users[userIndex].id,
+    name: users[userIndex].name,
+    email: users[userIndex].email,
+    bio: users[userIndex].bio,
+    role: users[userIndex].role,
+    avatar: users[userIndex].avatar ?? null,
   });
 });
 
@@ -181,8 +216,8 @@ app.post('/articles/:articleId/comments', async (request, response) => {
 app.post('/articles', async (request, response) => {
   const { title, category, body, coverImage, userId } = request.body ?? {};
 
-  if (!title?.trim() || !category?.trim() || !body?.trim() || !userId?.trim()) {
-    response.status(400).json({ message: 'Title, category, body, and userId are required.' });
+  if (!title?.trim() || !body?.trim() || !userId?.trim()) {
+    response.status(400).json({ message: 'Title, body, and userId are required.' });
     return;
   }
 
@@ -199,14 +234,12 @@ app.post('/articles', async (request, response) => {
   const normalizedBody = body.trim();
   const article = {
     id: articleId,
-    category: category.trim(),
+    category: category?.trim() || null,
     title: title.trim(),
     preview: normalizedBody.slice(0, 140).trimEnd() + (normalizedBody.length > 140 ? '...' : ''),
     author: user.name,
     readTime: calculateReadTime(normalizedBody),
-    coverImage:
-      coverImage?.trim() ||
-      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80',
+    coverImage: coverImage?.trim() || null,
     content: buildArticleContent(normalizedBody),
   };
 

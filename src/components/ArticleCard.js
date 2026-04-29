@@ -3,15 +3,21 @@ import { Clock3 } from 'lucide-react-native';
 import { spacing } from '../theme/spacing';
 
 export default function ArticleCard({ article, onPress, theme }) {
+  const hasCover = Boolean(article.coverImage);
+
   return (
     <TouchableOpacity
       activeOpacity={0.92}
       onPress={onPress}
       style={[styles.card, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}
     >
-      <Image source={{ uri: article.coverImage }} style={styles.cover} />
+      {hasCover ? (
+        <Image source={{ uri: article.coverImage }} style={styles.cover} />
+      ) : null}
       <View style={styles.body}>
-        <Text style={[styles.category, { color: theme.accent }]}>{article.category}</Text>
+        {article.category ? (
+          <Text style={[styles.category, { color: theme.accent }]}>{article.category}</Text>
+        ) : null}
         <Text style={[styles.title, { color: theme.textPrimary }]}>{article.title}</Text>
         <Text style={[styles.preview, { color: theme.textSecondary }]} numberOfLines={3}>
           {article.preview}
