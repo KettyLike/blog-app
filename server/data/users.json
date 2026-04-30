@@ -23,5 +23,13 @@
     "password": "1234",
     "bio": "New BlogApp author.",
     "role": "author"
+  },
+  {
+    "id": "u-1777588396979",
+    "name": "KL",
+    "email": "mariamarchenko@gmail.com",
+    "password": "1234",
+    "bio": "",
+    "role": "author"
   }
 ]

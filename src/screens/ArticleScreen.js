@@ -1,7 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
-  Share,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import { ArrowLeft, MessageCircle, Share2 } from 'lucide-react-native';
 import CommentList from '../components/CommentList';
 import ContentRenderer from '../components/ContentRenderer';
 import { spacing } from '../theme/spacing';
+import { shareArticle } from '../utils/shareArticle';
 
 export default function ArticleScreen({
   article,
@@ -52,11 +53,10 @@ export default function ArticleScreen({
 
   const handleShare = async () => {
     try {
-      await Share.share({
-        message: `${article.title}\n\n${article.preview}`,
-      });
+      await shareArticle(article);
     } catch (error) {
       console.warn(error);
+      Alert.alert('Sharing unavailable', 'Try again in a moment.');
     }
   };
 
@@ -98,6 +98,10 @@ export default function ArticleScreen({
             <Share2 color={theme.textPrimary} size={20} />
           </TouchableOpacity>
         </View>
+
+        {article.coverImage ? (
+          <Image source={{ uri: article.coverImage }} style={styles.coverImage} />
+        ) : null}
 
         <View style={styles.meta}>
           {article.category ? (
@@ -153,6 +157,11 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  coverImage: {
+    width: '100%',
+    height: 240,
+    borderRadius: 22,
   },
   meta: {
     gap: spacing.sm,

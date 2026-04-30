@@ -66,6 +66,126 @@ function calculateReadTime(body) {
   return `${minutes} min read`;
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function contentBlockToHtml(block) {
+  if (block.type === 'heading') {
+    return `<h2>${escapeHtml(block.text)}</h2>`;
+  }
+
+  if (block.type === 'image' && block.url) {
+    return `<img src="${escapeHtml(block.url)}" alt="" />`;
+  }
+
+  return `<p>${escapeHtml(block.text)}</p>`;
+}
+
+function renderSharedArticlePage(article) {
+  const description = article.preview ?? '';
+  const coverImage = article.coverImage
+    ? `<img class="cover" src="${escapeHtml(article.coverImage)}" alt="" />`
+    : '';
+  const category = article.category
+    ? `<span class="category">${escapeHtml(article.category)}</span>`
+    : '';
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${escapeHtml(article.title)} | BlogApp</title>
+  <meta name="description" content="${escapeHtml(description)}" />
+  <meta property="og:title" content="${escapeHtml(article.title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  ${article.coverImage ? `<meta property="og:image" content="${escapeHtml(article.coverImage)}" />` : ''}
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f6f3ee;
+    }
+    body {
+      margin: 0;
+      padding: 32px 18px;
+    }
+    main {
+      width: min(760px, 100%);
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e7dfd4;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 50px rgba(40, 30, 20, 0.08);
+    }
+    article {
+      padding: clamp(24px, 5vw, 48px);
+    }
+    .cover {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+    .category {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: #b15f38;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 7vw, 52px);
+      line-height: 1.05;
+    }
+    .meta {
+      margin: 16px 0 28px;
+      color: #687386;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    h2 {
+      margin: 34px 0 12px;
+      font-size: 24px;
+    }
+    p {
+      margin: 0 0 18px;
+      color: #334155;
+      font-size: 18px;
+      line-height: 1.68;
+    }
+    article img:not(.cover) {
+      width: 100%;
+      border-radius: 14px;
+      margin: 14px 0 24px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    ${coverImage}
+    <article>
+      ${category}
+      <h1>${escapeHtml(article.title)}</h1>
+      <div class="meta">${escapeHtml(article.author)} &middot; ${escapeHtml(article.readTime)}</div>
+      ${article.content.map(contentBlockToHtml).join('\n      ')}
+    </article>
+  </main>
+</body>
+</html>`;
+}
+
 app.get('/health', (_request, response) => {
   response.json({ ok: true });
 });
@@ -184,6 +304,18 @@ app.get('/articles/:articleId', async (request, response) => {
   }
 
   response.json(article);
+});
+
+app.get('/share/articles/:articleId', async (request, response) => {
+  const articles = await readArticlesWithComments();
+  const article = articles.find((item) => item.id === request.params.articleId);
+
+  if (!article) {
+    response.status(404).send('Article not found.');
+    return;
+  }
+
+  response.type('html').send(renderSharedArticlePage(article));
 });
 
 app.get('/articles/:articleId/comments', async (request, response) => {

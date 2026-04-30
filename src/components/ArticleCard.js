@@ -1,15 +1,21 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Clock3 } from 'lucide-react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Clock3, Share2 } from 'lucide-react-native';
 import { spacing } from '../theme/spacing';
 
-export default function ArticleCard({ article, onPress, theme }) {
+export default function ArticleCard({ article, onPress, onShare, theme }) {
   const hasCover = Boolean(article.coverImage);
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.92}
+    <Pressable
       onPress={onPress}
-      style={[styles.card, { backgroundColor: theme.surface, shadowColor: theme.shadow }]}
+      style={({ pressed }) => [
+        styles.card,
+        {
+          backgroundColor: theme.surface,
+          shadowColor: theme.shadow,
+          opacity: pressed ? 0.92 : 1,
+        },
+      ]}
     >
       {hasCover ? (
         <Image source={{ uri: article.coverImage }} style={styles.cover} />
@@ -25,13 +31,32 @@ export default function ArticleCard({ article, onPress, theme }) {
 
         <View style={styles.footer}>
           <Text style={[styles.author, { color: theme.textMuted }]}>{article.author}</Text>
-          <View style={styles.readTime}>
-            <Clock3 size={14} color={theme.textMuted} />
-            <Text style={[styles.author, { color: theme.textMuted }]}>{article.readTime}</Text>
+          <View style={styles.footerActions}>
+            <View style={styles.readTime}>
+              <Clock3 size={14} color={theme.textMuted} />
+              <Text style={[styles.author, { color: theme.textMuted }]}>{article.readTime}</Text>
+            </View>
+            <Pressable
+              accessibilityLabel={`Share ${article.title}`}
+              hitSlop={8}
+              onPress={(event) => {
+                event.stopPropagation();
+                onShare?.(article);
+              }}
+              style={({ pressed }) => [
+                styles.shareButton,
+                {
+                  backgroundColor: theme.surfaceAlt,
+                  opacity: pressed ? 0.72 : 1,
+                },
+              ]}
+            >
+              <Share2 size={16} color={theme.textPrimary} />
+            </Pressable>
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -72,14 +97,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: spacing.md,
   },
   author: {
     fontSize: 13,
     fontWeight: '500',
+    flexShrink: 1,
+  },
+  footerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   readTime: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  shareButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

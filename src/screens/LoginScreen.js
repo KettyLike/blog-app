@@ -9,10 +9,20 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
   const isRegisterMode = mode === 'register';
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('maria@example.com');
-  const [password, setPassword] = useState('12345678');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [bio, setBio] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+
+  const getInputStyle = (fieldName) => [
+    styles.input,
+    {
+      backgroundColor: theme.surfaceAlt,
+      color: theme.textPrimary,
+      borderColor: focusedField === fieldName ? theme.accent : theme.border,
+    },
+  ];
 
   const handleSubmit = async () => {
     if (isRegisterMode) {
@@ -53,7 +63,7 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
     setIsSubmitting(false);
 
     if (!isLoggedIn) {
-      Alert.alert('Login failed', 'Check the backend server and demo credentials.');
+      Alert.alert('Login failed', 'Check your email and password, then try again.');
     }
   };
 
@@ -72,44 +82,31 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
         </Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           {isRegisterMode
-            ? 'Register a new demo account to publish articles and comment from your profile.'
-            : 'Demo login to open the blog dashboard, write articles, and manage your profile.'}
+            ? 'Create your account to publish articles and comment from your profile.'
+            : 'Sign in to open the blog dashboard, write articles, and manage your profile.'}
         </Text>
-        {!isRegisterMode ? (
-          <Text style={[styles.hint, { color: theme.textMuted }]}>
-            Demo: `maria@example.com` / `12345678`
-          </Text>
-        ) : null}
 
         {isRegisterMode ? (
           <>
             <TextInput
               placeholder="Name"
               placeholderTextColor={theme.textMuted}
+              caretHidden={false}
               value={name}
               onChangeText={setName}
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.surfaceAlt,
-                  color: theme.textPrimary,
-                  borderColor: theme.border,
-                },
-              ]}
+              onBlur={() => setFocusedField(null)}
+              onFocus={() => setFocusedField('name')}
+              style={getInputStyle('name')}
             />
             <TextInput
               placeholder="Bio (optional)"
               placeholderTextColor={theme.textMuted}
+              caretHidden={false}
               value={bio}
               onChangeText={setBio}
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.surfaceAlt,
-                  color: theme.textPrimary,
-                  borderColor: theme.border,
-                },
-              ]}
+              onBlur={() => setFocusedField(null)}
+              onFocus={() => setFocusedField('bio')}
+              style={getInputStyle('bio')}
             />
           </>
         ) : null}
@@ -118,33 +115,29 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
           placeholder="Email"
           placeholderTextColor={theme.textMuted}
           autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          caretHidden={false}
           keyboardType="email-address"
           value={email}
           onChangeText={setEmail}
-          style={[
-            styles.input,
-            {
-              backgroundColor: theme.surfaceAlt,
-              color: theme.textPrimary,
-              borderColor: theme.border,
-            },
-          ]}
+          onBlur={() => setFocusedField(null)}
+          onFocus={() => setFocusedField('email')}
+          style={getInputStyle('email')}
         />
 
         <TextInput
           placeholder="Password"
           placeholderTextColor={theme.textMuted}
+          autoCapitalize="none"
+          autoCorrect={false}
+          caretHidden={false}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          style={[
-            styles.input,
-            {
-              backgroundColor: theme.surfaceAlt,
-              color: theme.textPrimary,
-              borderColor: theme.border,
-            },
-          ]}
+          onBlur={() => setFocusedField(null)}
+          onFocus={() => setFocusedField('password')}
+          style={getInputStyle('password')}
         />
 
         <Pressable
@@ -195,41 +188,41 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   card: {
-    borderRadius: 28,
-    padding: spacing.xl,
-    gap: spacing.md,
+    width: '100%',
+    maxWidth: 430,
+    alignSelf: 'center',
+    borderRadius: 22,
+    padding: spacing.lg,
+    gap: spacing.sm,
   },
   badge: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '800',
   },
   subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  hint: {
-    fontSize: 13,
-    fontWeight: '600',
+    fontSize: 14,
+    lineHeight: 20,
   },
   input: {
-    borderRadius: 16,
+    borderRadius: 14,
     borderWidth: 1,
     paddingHorizontal: spacing.md,
-    paddingVertical: 14,
+    paddingVertical: 10,
     fontSize: 15,
+    minHeight: 44,
   },
   button: {
-    borderRadius: 16,
-    paddingVertical: 15,
+    borderRadius: 14,
+    paddingVertical: 12,
     alignItems: 'center',
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
   },
   buttonText: {
     fontSize: 15,
@@ -237,7 +230,7 @@ const styles = StyleSheet.create({
   },
   linkButton: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   linkText: {
     fontSize: 14,

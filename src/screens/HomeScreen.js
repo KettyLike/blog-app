@@ -1,8 +1,9 @@
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ArticleCard from '../components/ArticleCard';
 import { spacing } from '../theme/spacing';
+import { shareArticle } from '../utils/shareArticle';
 
 export default function HomeScreen({ articles, navigation, onRefreshArticles, theme }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -11,6 +12,15 @@ export default function HomeScreen({ articles, navigation, onRefreshArticles, th
     setIsRefreshing(true);
     await onRefreshArticles();
     setIsRefreshing(false);
+  };
+
+  const handleShare = async (article) => {
+    try {
+      await shareArticle(article);
+    } catch (error) {
+      console.warn(error);
+      Alert.alert('Sharing unavailable', 'Try again in a moment.');
+    }
   };
 
   return (
@@ -35,6 +45,7 @@ export default function HomeScreen({ articles, navigation, onRefreshArticles, th
           <ArticleCard
             article={item}
             onPress={() => navigation.navigate('Article', { articleId: item.id })}
+            onShare={handleShare}
             theme={theme}
           />
         )}
