@@ -206,14 +206,13 @@ app.post('/auth/login', async (request, response) => {
     id: user.id,
     name: user.name,
     email: user.email,
-    bio: user.bio,
     role: user.role,
     avatar: user.avatar ?? null,
   });
 });
 
 app.post('/auth/register', async (request, response) => {
-  const { name, email, password, bio } = request.body ?? {};
+  const { name, email, password } = request.body ?? {};
 
   if (!name?.trim() || !email?.trim() || !password?.trim()) {
     response.status(400).json({ message: 'Name, email, and password are required.' });
@@ -234,7 +233,6 @@ app.post('/auth/register', async (request, response) => {
     name: name.trim(),
     email: normalizedEmail,
     password: password.trim(),
-    bio: bio?.trim() || '',
     role: 'author',
   };
 
@@ -245,7 +243,6 @@ app.post('/auth/register', async (request, response) => {
     id: createdUser.id,
     name: createdUser.name,
     email: createdUser.email,
-    bio: createdUser.bio,
     role: createdUser.role,
     avatar: createdUser.avatar ?? null,
   });
@@ -278,7 +275,6 @@ app.post('/users/:userId/avatar', async (request, response) => {
     id: users[userIndex].id,
     name: users[userIndex].name,
     email: users[userIndex].email,
-    bio: users[userIndex].bio,
     role: users[userIndex].role,
     avatar: users[userIndex].avatar ?? null,
   });
@@ -325,17 +321,25 @@ app.get('/articles/:articleId/comments', async (request, response) => {
 
 app.post('/articles/:articleId/comments', async (request, response) => {
   const { articleId } = request.params;
-  const { author, text } = request.body ?? {};
+  const { userId, text } = request.body ?? {};
 
-  if (!author?.trim() || !text?.trim()) {
-    response.status(400).json({ message: 'Author and text are required.' });
+  if (!userId?.trim() || !text?.trim()) {
+    response.status(400).json({ message: 'User and text are required.' });
+    return;
+  }
+
+  const users = await readUsersDb();
+  const user = users.find((item) => item.id === userId);
+
+  if (!user) {
+    response.status(404).json({ message: 'User not found.' });
     return;
   }
 
   const data = await readCommentsDb();
   const createdComment = {
     id: `c-${Date.now()}`,
-    author: author.trim(),
+    author: user.name,
     text: text.trim(),
   };
 

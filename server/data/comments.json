@@ -1,26 +1,14 @@
 {
-  "1": [
+  "article-1777625089175": [
     {
-      "id": "c-1",
-      "author": "Olena",
-      "text": "Great structure. I like that the focus stays on readability instead of decoration only."
+      "id": "c-1777625579365",
+      "author": "Test",
+      "text": "1st comment"
     },
     {
-      "id": "c-2",
-      "author": "Taras",
-      "text": "It would be nice to add bookmarks or saved articles in a later iteration."
-    },
-    {
-      "id": "c-1776536936754",
-      "author": "Н",
-      "text": "Новий"
-    }
-  ],
-  "2": [
-    {
-      "id": "c-3",
-      "author": "Daria",
-      "text": "For coursework and labs, Expo really saves a lot of time."
+      "id": "c-1777625799610",
+      "author": "Maria",
+      "text": "2nd comm"
     }
   ]
 }

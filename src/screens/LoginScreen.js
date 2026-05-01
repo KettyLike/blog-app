@@ -11,7 +11,6 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [bio, setBio] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
@@ -36,7 +35,6 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
         name: name.trim(),
         email: email.trim(),
         password: password.trim(),
-        bio: bio.trim(),
       });
       setIsSubmitting(false);
 
@@ -97,16 +95,6 @@ export default function LoginScreen({ onLogin, onRegister, theme }) {
               onBlur={() => setFocusedField(null)}
               onFocus={() => setFocusedField('name')}
               style={getInputStyle('name')}
-            />
-            <TextInput
-              placeholder="Bio (optional)"
-              placeholderTextColor={theme.textMuted}
-              caretHidden={false}
-              value={bio}
-              onChangeText={setBio}
-              onBlur={() => setFocusedField(null)}
-              onFocus={() => setFocusedField('bio')}
-              style={getInputStyle('bio')}
             />
           </>
         ) : null}

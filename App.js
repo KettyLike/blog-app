@@ -36,8 +36,16 @@ export default function App() {
   }, [handleRefreshArticles]);
 
   const handleAddComment = useCallback(async (articleId, comment) => {
+    if (!currentUser?.id) {
+      return false;
+    }
+
     try {
-      const createdComment = await postComment(articleId, comment);
+      const createdComment = await postComment(articleId, {
+        ...comment,
+        userId: currentUser.id,
+        author: currentUser.name,
+      });
 
       setArticleItems((currentArticles) =>
         currentArticles.map((article) =>
@@ -55,7 +63,7 @@ export default function App() {
       console.warn('Failed to save comment to backend.', error);
       return false;
     }
-  }, []);
+  }, [currentUser?.id]);
 
   const handleRefreshArticle = useCallback(async (articleId) => {
     try {

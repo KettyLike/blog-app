@@ -60,14 +60,13 @@ export default function ArticleScreen({
     }
   };
 
-  const handleSubmitComment = ({ author, text }) => {
-    if (!author.trim() || !text.trim()) {
-      Alert.alert('Incomplete form', 'Please enter your name and comment text.');
+  const handleSubmitComment = ({ text }) => {
+    if (!text.trim()) {
+      Alert.alert('Incomplete form', 'Please enter comment text.');
       return false;
     }
 
     return onAddComment(article.id, {
-      author: author.trim(),
       text: text.trim(),
     }).then((isSaved) => {
       if (!isSaved) {

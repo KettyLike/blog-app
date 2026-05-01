@@ -6,7 +6,6 @@ import { spacing } from '../theme/spacing';
 export default function CommentList({ comments, onSubmit, theme }) {
   const [isComposerOpen, setIsComposerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [author, setAuthor] = useState('');
   const [text, setText] = useState('');
 
   const handleSubmit = async () => {
@@ -15,14 +14,13 @@ export default function CommentList({ comments, onSubmit, theme }) {
     }
 
     setIsSubmitting(true);
-    const isSubmitted = await onSubmit({ author, text });
+    const isSubmitted = await onSubmit({ text });
     setIsSubmitting(false);
 
     if (!isSubmitted) {
       return;
     }
 
-    setAuthor('');
     setText('');
     setIsComposerOpen(false);
   };
@@ -57,20 +55,6 @@ export default function CommentList({ comments, onSubmit, theme }) {
       {isComposerOpen ? (
         <View style={[styles.commentCard, { backgroundColor: theme.surfaceAlt }]}>
           <Text style={[styles.author, { color: theme.textPrimary }]}>Write a comment</Text>
-          <TextInput
-            placeholder="Your name"
-            placeholderTextColor={theme.textMuted}
-            style={[
-              styles.input,
-              {
-                backgroundColor: theme.surface,
-                color: theme.textPrimary,
-                borderColor: theme.border,
-              },
-            ]}
-            value={author}
-            onChangeText={setAuthor}
-          />
           <TextInput
             placeholder="Share your thoughts"
             placeholderTextColor={theme.textMuted}
