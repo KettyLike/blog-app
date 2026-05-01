@@ -1,88 +1,52 @@
 # BlogApp
 
-Mobile blog application built with `React Native`, `Expo`, and a small local `Express` backend.
+BlogApp is a mobile blog application built with React Native, Expo, and a local Express backend. The app lets users register, sign in, create posts with images, read articles, and leave comments.
 
-This step includes demo authentication, bottom tab navigation, backend-driven articles and comments, article refresh on details open, native share support, and an inline comment composer.
+## Features
 
-## Implemented in this step
-
-- login screen with demo credentials;
+- user registration and login;
 - bottom tab navigation: Home, Write, Profile;
-- home screen with article previews loaded from backend;
-- article details screen opened through `React Navigation`;
-- formatted content rendering: headings, paragraphs, images;
-- comments section on the article screen;
-- article details refreshed through `GET /articles/:id` on screen open;
-- inline comment composer inside the comments section;
-- articles and comments served by a local backend API;
-- article creation through the backend;
-- profile screen with logout action;
-- project structure for further development.
+- article list loaded from the backend;
+- article details screen with formatted content;
+- creating new posts as the signed-in user;
+- optional cover image upload from the device gallery;
+- comments saved with the registered user's name automatically;
+- profile screen with avatar upload and logout;
+- native article sharing;
+- local JSON databases for users, articles, and comments.
 
-## Project structure
+## Tech Stack
 
-```text
-src/
-  components/
-  config/
-  navigation/
-  screens/
-  services/
-  theme/
+- React Native
+- Expo
+- React Navigation
+- Express
+- JSON files as a local database
 
-server/
-  data/
-```
+## Install Dependencies
 
-## Demo login
-
-- email: `maria@example.com`
-- password: `12345678`
-
-## Registration
-
-Use the login screen toggle to switch to registration mode and create a new account (name, email, password). Accounts are stored in `server/data/users.json`.
-
-## Images
-
-- Cover images and avatars are uploaded from the device gallery (no URL fields).
-- Newly created articles can be published without a cover image.
-
-## Install dependencies
+Install all project dependencies from the repository root:
 
 ```bash
 npm install
 ```
 
-## Run backend
+## Run Backend
 
 ```bash
 npm run server
 ```
 
-Keep this terminal open while the app is running.
+Keep this terminal open while using the app. The backend runs on:
 
-## Run the app
+```text
+http://localhost:4000
+```
+
+## Run Mobile App
+
+Open a second terminal and start Expo:
 
 ```bash
 npm start
 ```
-
-Then choose Android in the Expo terminal with `a`, or iOS with `i` on macOS.
-
-## Backend URL for devices
-
-- Android emulator uses `http://10.0.2.2:4000` or auto-detects your Expo host when possible.
-- iOS simulator uses `http://localhost:4000` automatically.
-- Physical device: start Expo with `EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:4000 npm start`
-
-If you see `Network request failed`, check these two things first:
-
-- `npm run server` is running in a separate terminal;
-- your phone and computer are on the same Wi‑Fi network.
-
-## Next steps
-
-- improve navigation;
-- move mock data into a dedicated service layer;
-- polish the final UI.
